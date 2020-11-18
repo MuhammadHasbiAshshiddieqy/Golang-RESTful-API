@@ -2,29 +2,34 @@ package model
 
 import (
 	"database/sql"
+	"strconv"
+	"fmt"
 
 	"github.com/MuhammadHasbiAshshiddieqy/Golang-RESTful-API/db"
 )
 
-type Order struct {
-	ID   sql.NullInt64   `json:"order_id"`
+type Book struct {
+	Title   			sql.NullString 
+	Description   sql.NullString
+	Content   		sql.NullString
 }
 
 // Read - read data from database
-func Read(ordStat string, shipStat string, invStat string, d db.Connection) (Order, error) {
-	o, err := readOrder(orderID, d)
+func Read(BookID string, d db.Connection) (Book, error) {
+	o, err := readBook(BookID, d)
 	if err != nil {
-		return Order{}, err
+		return Book{}, err
 	}
 
   return o, nil
 }
 
-func readOrder(ordStat string, shipStat string, invStat string, d db.Connection) (Order, error) {
-	o := Order{}
-	r := d.Read(orderStmnt(ordStat, shipStat, invStat))
+func readBook(BookID string, d db.Connection) (Book, error) {
+	o := Book{}
+	id, _ := strconv.Atoi(BookID)
+	r := d.Read(bookStmnt(id))
 
-	err := r.Scan(&o.ID)
+	err := r.Scan(&o.Title, &o.Description, &o.Content)
 	if err != nil {
 		return o, err
 	}
@@ -32,18 +37,18 @@ func readOrder(ordStat string, shipStat string, invStat string, d db.Connection)
 	return o, nil
 }
 
-func orderStmnt(ordStat string, shipStat string, invStat string) string {
-	tmplt := "SELECT id FROM qa_order_status WHERE status_order = %s AND status_shipment = %s AND status_invoice = %s"
-	return fmt.Sprintf(tmplt, ordStat, shipStat, invStat)
+func bookStmnt(bookID int) string {
+	tmplt := "SELECT Title, Description, Content FROM Books WHERE Id = %d"
+	return fmt.Sprintf(tmplt, bookID)
 }
 
-// NewNullInt64 - create null int64
-func NewNullInt64(s int64) sql.NullInt64 {
-	if s == 0 {
-		return sql.NullInt64{}
+// NewNullString - create null string
+func NewNullString(s string) sql.NullString {
+	if len(s) == 0 {
+		return sql.NullString{}
 	}
-	return sql.NullInt64{
-		Int64: s,
-		Valid: true,
+	return sql.NullString{
+		String: s,
+		Valid:  true,
 	}
 }

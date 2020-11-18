@@ -7,19 +7,16 @@ import (
   "encoding/json"
 
   "github.com/gorilla/mux"
-	"github.com/MuhammadHasbiAshshiddieqy/Golang-RESTful-API/db"
 )
 
 // Body - struct to save request
 type Body struct {
-	OrderStatus    string         `json:"order_status"`
-  ShipmentStatus string         `json:"shipment_status"`
-  InvoiceStatus  String         `json:"invoice_status"`
+	BookID    string         `json:"book_id"`
 }
 
-func handleRequests(d db.Connection) {
+func HandleRequests() *mux.Router {
   myRouter := mux.NewRouter().StrictSlash(true)
-  myRouter.HandleFunc("/orderid", getOrderID).Methods("POST")
+  myRouter.HandleFunc("/bookid", getBookByID).Methods("POST")
 
   return myRouter
 }

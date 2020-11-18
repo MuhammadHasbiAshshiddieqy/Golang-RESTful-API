@@ -6,9 +6,7 @@ import (
 	"log"
   "errors"
 	"net/http"
-  "encoding/json"
 
-	"github.com/MuhammadHasbiAshshiddieqy/Golang-RESTful-API/db"
   "github.com/MuhammadHasbiAshshiddieqy/Golang-RESTful-API/service"
 )
 
@@ -18,10 +16,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	d := db.Connect()
-	defer d.Close()
-
-  router := service.handleRequests(d)
+  router := service.HandleRequests()
 
 	fmt.Printf("Starting server at port 8080\n")
   log.Fatal(http.ListenAndServe(":8080", router))
@@ -33,11 +28,6 @@ func checkEnv() error {
 	_, ok := os.LookupEnv("DATA_SOURCE")
 	if !ok {
 		return errors.New("env:data_source does not exist")
-	}
-
-	_, ok = os.LookupEnv("APIGATEWAY_URL")
-	if !ok {
-		return errors.New("env:cred_url does not exist")
 	}
 
 	log.Println("Environment is complete.....")

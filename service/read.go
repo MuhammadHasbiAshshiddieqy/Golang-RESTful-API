@@ -10,17 +10,37 @@ import (
 	"github.com/MuhammadHasbiAshshiddieqy/Golang-RESTful-API/model"
 )
 
-func getOrderID(w http.ResponseWriter, r *http.Request){
-  fmt.Println("Endpoint Hit: getOrderID")
+type resBook struct {
+	Title   			string   `json:"title"`
+	Description   string   `json:"description"`
+	Content   		string   `json:"content"`
+}
+
+func mapping(o model.Book) resBook {
+	res := resBook{}
+	res.Title = o.Title.String
+	res.Description = o.Description.String
+	res.Content = o.Content.String
+
+	return res
+}
+
+func getBookByID(w http.ResponseWriter, r *http.Request){
+	d := db.Connect()
+	defer d.Close()
+
+  fmt.Println("Endpoint Hit: getBookID")
   b, err := unmarshal(r)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	o, err := model.Read(b.OrderStatus, b.ShipmentStatus, b.InvoiceStatus , d)
+	o, err := model.Read(b.BookID, d)
 	if err != nil {
 		log.Printf("Error read model: %s", err)
 	}
 
-  json.NewEncoder(w).Encode(o)
+	res := mapping(o)
+
+  json.NewEncoder(w).Encode(res)
 }
