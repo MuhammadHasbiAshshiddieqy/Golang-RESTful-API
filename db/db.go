@@ -39,6 +39,12 @@ func (c Connection) Read(stmnt string) *sql.Row {
 	return s.QueryRow(stmnt)
 }
 
+// Update rows
+func (c Connection) Update(stmnt string) (sql.Result,error) {
+	s := c.Server
+	return s.Exec(stmnt)
+}
+
 // Query multiple rows
 func (c Connection) Query(stmnt string) (*sql.Rows, error) {
 	s := c.Server
